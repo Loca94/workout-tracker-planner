@@ -1,6 +1,7 @@
 import type { ResolvedWorkout } from '#lib/model/resolveWorkout.ts';
 import { amrapSegments } from './amrapSegments';
 import { emomSegments } from './emomSegments';
+import { intervalSegments } from './intervalSegments';
 import type { Segment, Timeline } from './timeline';
 
 export type TimelineOptions = {
@@ -35,6 +36,6 @@ function modeSegments({ workout, items }: ResolvedWorkout): Segment[] {
 		case 'amrap':
 			return amrapSegments(workout.config);
 		case 'intervals':
-			throw new Error('Timelines for intervals workouts are not supported yet');
+			return intervalSegments(workout.config, items);
 	}
 }

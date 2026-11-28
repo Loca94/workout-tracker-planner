@@ -71,9 +71,17 @@ describe('buildTimeline', () => {
 		expect(timeline.totalMs).toBe(1_210_000);
 	});
 
-	it('does not support intervals yet', () => {
-		expect(() => buildTimeline(resolvedSample('sample-tabata'))).toThrow(
-			'Timelines for intervals workouts are not supported yet'
-		);
+	it('builds the Tabata sample: prep, then 8 work blocks and 7 rests', () => {
+		const timeline = buildTimeline(resolvedSample('sample-tabata'));
+
+		expect(timeline.segments).toHaveLength(1 + 15);
+		expect(timeline.totalMs).toBe(10_000 + 8 * 20_000 + 7 * 10_000);
+	});
+
+	it('builds the mobility flow from the hold durations', () => {
+		const timeline = buildTimeline(resolvedSample('sample-mobility'));
+
+		expect(timeline.segments.map((segment) => segment.kind)).toEqual(['prep', 'work', 'work']);
+		expect(timeline.totalMs).toBe(10_000 + 60_000 + 45_000);
 	});
 });
