@@ -18,7 +18,6 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
  *   features  → everything except server
  *   server    → model only
  *
- * model and engine also stay framework-free (no svelte, no $app).
  * Relative parent imports (../) are banned in src/lib, so every import
  * across folders uses #lib/... and these rules can see it.
  */
