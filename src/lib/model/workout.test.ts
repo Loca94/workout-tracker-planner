@@ -104,7 +104,7 @@ describe('workout items', () => {
 	});
 
 	it('accepts a timed hold', () => {
-		const hold = withItem({ kind: 'hold', reps: undefined, holdSec: 60, perSide: true });
+		const hold = withItem({ kind: 'hold', reps: undefined, holdSec: 30, perSide: true });
 
 		expect(workoutSchema.safeParse(hold).success).toBe(true);
 	});
@@ -115,5 +115,37 @@ describe('workout items', () => {
 
 	it('requires a variation on every item', () => {
 		expect(firstError(withItem({ variationId: '' }))).toBe('Id is required');
+	});
+
+	describe('holds in an EMOM', () => {
+		function emomWithHold(holdSec: number, perSide: boolean) {
+			return withItem({ kind: 'hold', reps: undefined, holdSec, perSide });
+		}
+
+		it('accepts a per-side hold that fills the interval exactly', () => {
+			expect(workoutSchema.safeParse(emomWithHold(30, true)).success).toBe(true);
+		});
+
+		it('rejects a per-side hold that does not fit the interval', () => {
+			expect(firstError(emomWithHold(40, true))).toBe(
+				'Row 1: the hold takes 80s but the interval is 60s'
+			);
+		});
+
+		it('rejects a two-sided hold longer than the interval', () => {
+			expect(firstError(emomWithHold(70, false))).toBe(
+				'Row 1: the hold takes 70s but the interval is 60s'
+			);
+		});
+
+		it('does not limit holds in other modes', () => {
+			const intervals = {
+				...emomWithHold(90, true),
+				mode: 'intervals',
+				config: { workSec: 20, restSec: 10, rounds: 1 }
+			};
+
+			expect(workoutSchema.safeParse(intervals).success).toBe(true);
+		});
 	});
 });

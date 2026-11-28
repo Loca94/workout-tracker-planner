@@ -8,8 +8,8 @@ function reps(): ResolvedItem {
 	return { ...names, kind: 'reps', reps: 10, perSide: false };
 }
 
-function hold(holdSec: number): ResolvedItem {
-	return { ...names, kind: 'hold', holdSec, perSide: false };
+function hold(holdSec: number, perSide = false): ResolvedItem {
+	return { ...names, kind: 'hold', holdSec, perSide };
 }
 
 function kinds(segments: ReturnType<typeof intervalSegments>) {
@@ -69,6 +69,20 @@ describe('intervalSegments', () => {
 		expect(segments.map((segment) => [segment.startMs, segment.endMs])).toEqual([
 			[0, 60_000],
 			[60_000, 105_000]
+		]);
+	});
+
+	it('splits a per-side hold into left and right before the rest', () => {
+		const segments = intervalSegments({ workSec: 20, restSec: 10, rounds: 1 }, [
+			hold(30, true),
+			reps()
+		]);
+
+		expect(segments).toEqual([
+			{ startMs: 0, endMs: 30_000, kind: 'work', itemIndex: 0, side: 'L' },
+			{ startMs: 30_000, endMs: 60_000, kind: 'work', itemIndex: 0, side: 'R' },
+			{ startMs: 60_000, endMs: 70_000, kind: 'rest' },
+			{ startMs: 70_000, endMs: 90_000, kind: 'work', itemIndex: 1 }
 		]);
 	});
 });

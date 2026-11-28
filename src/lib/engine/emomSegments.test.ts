@@ -51,4 +51,39 @@ describe('emomSegments', () => {
 
 		expect(segments.map((segment) => segment.itemIndex)).toEqual([0, 0, 0]);
 	});
+
+	describe('with holds', () => {
+		function hold(holdSec: number, perSide: boolean): ResolvedItem {
+			return { ...item('Couch stretch'), kind: 'hold', holdSec, perSide };
+		}
+
+		it('times a per-side hold left then right, then rests for the rest of the interval', () => {
+			const segments = emomSegments({ intervalSec: 60, intervals: 1 }, [hold(20, true)]);
+
+			expect(segments).toEqual([
+				{ startMs: 0, endMs: 20_000, kind: 'work', itemIndex: 0, side: 'L' },
+				{ startMs: 20_000, endMs: 40_000, kind: 'work', itemIndex: 0, side: 'R' },
+				{ startMs: 40_000, endMs: 60_000, kind: 'rest' }
+			]);
+		});
+
+		it('adds no rest when the hold fills the interval exactly', () => {
+			const segments = emomSegments({ intervalSec: 60, intervals: 1 }, [hold(30, true)]);
+
+			expect(segments.map((segment) => segment.kind)).toEqual(['work', 'work']);
+		});
+
+		it('keeps the interval grid when holds and reps alternate', () => {
+			const segments = emomSegments({ intervalSec: 60, intervals: 2 }, [
+				hold(45, false),
+				item('Swing')
+			]);
+
+			expect(segments).toEqual([
+				{ startMs: 0, endMs: 45_000, kind: 'work', itemIndex: 0 },
+				{ startMs: 45_000, endMs: 60_000, kind: 'rest' },
+				{ startMs: 60_000, endMs: 120_000, kind: 'work', itemIndex: 1 }
+			]);
+		});
+	});
 });

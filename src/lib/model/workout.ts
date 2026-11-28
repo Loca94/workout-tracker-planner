@@ -71,9 +71,27 @@ const workoutBase = z.object({
 	items: z.array(workoutItemSchema).min(1, 'A workout needs at least one exercise')
 });
 
+const emomWorkoutSchema = workoutBase
+	.extend({ mode: z.literal('emom'), config: emomConfigSchema })
+	.superRefine((workout, ctx) => {
+		for (const [index, item] of workout.items.entries()) {
+			if (item.kind !== 'hold') continue;
+
+			const holdTotalSec = item.perSide ? item.holdSec * 2 : item.holdSec;
+
+			if (holdTotalSec > workout.config.intervalSec) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `Row ${index + 1}: the hold takes ${holdTotalSec}s but the interval is ${workout.config.intervalSec}s`,
+					path: ['items', index]
+				});
+			}
+		}
+	});
+
 export const workoutSchema = z.discriminatedUnion('mode', [
 	workoutBase.extend({ mode: z.literal('amrap'), config: amrapConfigSchema }),
-	workoutBase.extend({ mode: z.literal('emom'), config: emomConfigSchema }),
+	emomWorkoutSchema,
 	workoutBase.extend({ mode: z.literal('intervals'), config: intervalsConfigSchema })
 ]);
 

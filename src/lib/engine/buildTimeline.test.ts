@@ -78,10 +78,16 @@ describe('buildTimeline', () => {
 		expect(timeline.totalMs).toBe(10_000 + 8 * 20_000 + 7 * 10_000);
 	});
 
-	it('builds the mobility flow from the hold durations', () => {
+	it('builds the mobility flow with each hold split into left and right', () => {
 		const timeline = buildTimeline(resolvedSample('sample-mobility'));
 
-		expect(timeline.segments.map((segment) => segment.kind)).toEqual(['prep', 'work', 'work']);
-		expect(timeline.totalMs).toBe(10_000 + 60_000 + 45_000);
+		expect(timeline.segments.map((segment) => [segment.kind, segment.side])).toEqual([
+			['prep', undefined],
+			['work', 'L'],
+			['work', 'R'],
+			['work', 'L'],
+			['work', 'R']
+		]);
+		expect(timeline.totalMs).toBe(10_000 + 2 * 60_000 + 2 * 45_000);
 	});
 });
