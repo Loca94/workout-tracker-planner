@@ -57,8 +57,11 @@ describe('buildTimeline', () => {
 		expect(timeline.segments).toHaveLength(9);
 	});
 
-	it('has no alerts yet', () => {
-		expect(buildTimeline(emom).alerts).toEqual([]);
+	it('fills in the alerts, ending with end at the total time', () => {
+		const timeline = buildTimeline(emom);
+
+		expect(timeline.alerts.length).toBeGreaterThan(0);
+		expect(timeline.alerts.at(-1)).toMatchObject({ type: 'end', atMs: timeline.totalMs });
 	});
 
 	it('builds an AMRAP as prep plus one 20-minute work segment', () => {

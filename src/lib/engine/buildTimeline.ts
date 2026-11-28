@@ -1,4 +1,5 @@
 import type { ResolvedWorkout } from '#lib/model/resolveWorkout.ts';
+import { buildAlerts } from './alerts';
 import { amrapSegments } from './amrapSegments';
 import { emomSegments } from './emomSegments';
 import { intervalSegments } from './intervalSegments';
@@ -25,7 +26,7 @@ export function buildTimeline(resolved: ResolvedWorkout, options: TimelineOption
 	return {
 		totalMs: segments[segments.length - 1].endMs,
 		segments,
-		alerts: []
+		alerts: buildAlerts(segments)
 	};
 }
 
