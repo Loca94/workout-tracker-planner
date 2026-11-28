@@ -1,15 +1,8 @@
 import { z } from 'zod';
+import { idSchema, loadKgSchema, nameSchema } from './fields';
 import { mergeMuscles, muscleAdditionsSchema, musclesSchema, type Muscles } from './muscles';
 
 export const EXERCISE_CATEGORIES = ['kettlebell', 'mobility', 'bodyweight'] as const;
-
-const idSchema = z.string().min(1, 'Id is required');
-
-const nameSchema = z
-	.string()
-	.trim()
-	.min(1, 'Name is required')
-	.max(60, 'Name must be 60 characters or fewer');
 
 const tipSchema = z.string().trim().min(1, 'A tip cannot be empty');
 
@@ -28,11 +21,7 @@ export const exerciseSchema = z
 		id: idSchema,
 		name: nameSchema,
 		category: z.enum(EXERCISE_CATEGORIES),
-		defaultLoadKg: z
-			.number()
-			.min(0, 'Load cannot be negative')
-			.max(200, 'Load must be 200 kg or less')
-			.optional(),
+		defaultLoadKg: loadKgSchema.optional(),
 		notes: z.string().trim().max(500, 'Notes must be 500 characters or fewer').optional(),
 		muscles: musclesSchema,
 		variations: z.array(variationSchema).min(1, 'An exercise needs at least one variation'),
