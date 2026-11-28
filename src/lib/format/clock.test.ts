@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatClock } from './time';
+import { formatClock } from './clock';
 
 describe('formatClock', () => {
 	it('formats zero', () => {

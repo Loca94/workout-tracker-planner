@@ -8,7 +8,6 @@ export type Segment = {
 	kind: SegmentKind;
 	itemIndex?: number;
 	side?: Side;
-	label: string;
 };
 
 export type AlertType = 'tick' | 'go' | 'switch' | 'halfway' | 'end' | 'announce';
@@ -17,7 +16,6 @@ export type Alert = {
 	atMs: number;
 	segmentIndex: number;
 	type: AlertType;
-	text?: string;
 };
 
 /** All times are milliseconds from the start of the workout. Alerts are sorted by atMs. */

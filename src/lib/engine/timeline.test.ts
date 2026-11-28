@@ -4,9 +4,9 @@ import { segmentAt, type Timeline } from './timeline';
 const timeline: Timeline = {
 	totalMs: 130_000,
 	segments: [
-		{ startMs: 0, endMs: 10_000, kind: 'prep', label: 'Get ready' },
-		{ startMs: 10_000, endMs: 70_000, kind: 'work', itemIndex: 0, label: 'Swing' },
-		{ startMs: 70_000, endMs: 130_000, kind: 'work', itemIndex: 1, label: 'Goblet squat' }
+		{ startMs: 0, endMs: 10_000, kind: 'prep' },
+		{ startMs: 10_000, endMs: 70_000, kind: 'work', itemIndex: 0 },
+		{ startMs: 70_000, endMs: 130_000, kind: 'work', itemIndex: 1 }
 	],
 	alerts: []
 };

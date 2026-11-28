@@ -14,6 +14,7 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
  *   model     → nothing from the app (pure domain types and helpers)
  *   engine    → model
  *   storage   → model
+ *   format    → model (display text: labels, clock)
  *   ui        → nothing from the app (generic primitives)
  *   features  → everything except server
  *   server    → model only
@@ -22,21 +23,22 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
  * across folders uses #lib/... and these rules can see it.
  */
 const forbiddenLayers = {
-	model: ['engine', 'storage', 'ui', 'features', 'server'],
-	engine: ['storage', 'ui', 'features', 'server'],
-	storage: ['engine', 'ui', 'features', 'server'],
-	ui: ['model', 'engine', 'storage', 'features', 'server'],
+	model: ['engine', 'storage', 'format', 'ui', 'features', 'server'],
+	engine: ['storage', 'format', 'ui', 'features', 'server'],
+	storage: ['engine', 'format', 'ui', 'features', 'server'],
+	format: ['engine', 'storage', 'ui', 'features', 'server'],
+	ui: ['model', 'engine', 'storage', 'format', 'features', 'server'],
 	features: ['server'],
-	server: ['engine', 'storage', 'ui', 'features']
+	server: ['engine', 'storage', 'format', 'ui', 'features']
 };
 
 /** @typedef {keyof typeof forbiddenLayers} Layer */
 
 /** @type {Layer[]} */
-const LAYERS = ['model', 'engine', 'storage', 'ui', 'features', 'server'];
+const LAYERS = ['model', 'engine', 'storage', 'format', 'ui', 'features', 'server'];
 
 /** @type {Layer[]} */
-const frameworkFree = ['model', 'engine'];
+const frameworkFree = ['model', 'engine', 'format'];
 
 const noParentImports = {
 	regex: '^\\.\\./',
