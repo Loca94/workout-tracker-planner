@@ -61,10 +61,17 @@ describe('buildTimeline', () => {
 		expect(buildTimeline(emom).alerts).toEqual([]);
 	});
 
-	it('does not support AMRAP or intervals yet', () => {
-		expect(() => buildTimeline(resolvedSample('sample-amrap'))).toThrow(
-			'Timelines for amrap workouts are not supported yet'
-		);
+	it('builds an AMRAP as prep plus one 20-minute work segment', () => {
+		const timeline = buildTimeline(resolvedSample('sample-amrap'));
+
+		expect(timeline.segments).toEqual([
+			{ startMs: 0, endMs: 10_000, kind: 'prep' },
+			{ startMs: 10_000, endMs: 1_210_000, kind: 'work' }
+		]);
+		expect(timeline.totalMs).toBe(1_210_000);
+	});
+
+	it('does not support intervals yet', () => {
 		expect(() => buildTimeline(resolvedSample('sample-tabata'))).toThrow(
 			'Timelines for intervals workouts are not supported yet'
 		);

@@ -35,7 +35,8 @@
 	};
 
 	function describe(segment: Segment, resolved: ResolvedWorkout): string {
-		if (segment.itemIndex === undefined) return segment.kind === 'prep' ? 'Get ready' : '—';
+		if (segment.kind === 'prep') return 'Get ready';
+		if (segment.itemIndex === undefined) return resolved.items.map(itemLabel).join(', ');
 		return itemLabel(resolved.items[segment.itemIndex]);
 	}
 
